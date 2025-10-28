@@ -1,9 +1,45 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/pAwGQi_N)
+A simple C++ program to manage and query Amazon inventory data.
 
-# PA4 Skeleton Code
-We expect a fully functioninig command line REPL application for an inventory querying system. Feel free to modify the skeleton code as you see fit.
+#	Build the program:
+make
+# Creates the executable.
 
-### How to run the current skeleton code
-`make` will compile and execute the skeleton code
 
-Feel free to modify Makefile as you see fit.
+#	Run the program:
+make run
+#Runs the program
+
+
+#	Run tests:
+make test
+# Compiles and runs the unit tests
+
+
+# Clean build artifacts:
+make clean
+# Removes all compiled executable
+
+
+#	Search for a product by Inventory ID:
+> find <inventory_id>
+# Looks up a single product using its unique inventory ID.
+
+
+#	Search for products by Category:
+> find category <category_name>
+# Lists all products that belong to the given category.
+
+
+#	Help:
+help
+# lists all the commands
+
+
+#	Quit:
+quit
+# Quits the program
+
+
+#	Lag:
+auto runs
+# It takes a long while to log on first boot
