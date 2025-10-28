@@ -7,9 +7,11 @@
 
 using namespace std;
 
-HashTable<string, Product> productsTable(1000);
-HashTable<string, list<Product>> categoryTable(1000);
+// main data tables
+HashTable<string, Product> productsTable(1000);       // product ID -> Product
+HashTable<string, list<Product>> categoryTable(1000); // category -> list of Products
 
+// show commands
 void printHelp() {
     cout << "\nSupported commands:\n";
     cout << "1. find <inventoryid>          - Find product by ID and display details\n";
@@ -18,6 +20,7 @@ void printHelp() {
     cout << "4. quit                        - Exit the program\n\n";
 }
 
+// parse & run single command
 void evalCommand(const string& line) {
     istringstream iss(line);
     string command;
@@ -28,18 +31,14 @@ void evalCommand(const string& line) {
     }
     else if (command == "find") {
         string id;
-        if (!(iss >> id)) {
+        if (!(iss >> id)) {          // missing argument
             cout << "Usage: find <inventoryid>\n";
             return;
         }
 
         Product p;
-        if (productsTable.find(id, p)) {
-            p.printDetails();
-        }
-        else {
-            cout << "Inventory/Product not found\n";
-        }
+        if (productsTable.find(id, p)) p.printDetails();
+        else cout << "Inventory/Product not found\n";
     }
     else if (command == "listInventory") {
         string category;
@@ -51,22 +50,16 @@ void evalCommand(const string& line) {
 
         list<Product> plist;
         if (categoryTable.find(category, plist) && !plist.empty()) {
-            for (auto& p : plist) {
+            for (auto& p : plist)
                 cout << p.getId() << " | " << p.getName() << endl;
-            }
         }
-        else {
-            cout << "Invalid Category\n";
-        }
+        else cout << "Invalid Category\n";
     }
-    else if (command == "quit") {
-        exit(0);
-    }
-    else {
-        cout << "Command not recognized. Type 'help' for a list of commands.\n";
-    }
+    else if (command == "quit") exit(0);   // quick exit
+    else cout << "Command not recognized. Type 'help' for a list of commands.\n";
 }
 
+// load CSV & populate tables
 void bootStrap(const string& filename) {
     cout << "Welcome to Amazon Inventory Query System!\n";
     cout << "Loading products from CSV... Please wait.\n";
@@ -84,34 +77,32 @@ void bootStrap(const string& filename) {
         stringstream ss(line);
         string uniqId, productName, categoryStr;
 
-        getline(ss, uniqId, ',');
-        getline(ss, productName, ',');
-        // skip brand, asin
-        getline(ss, line, ',');
-        getline(ss, line, ',');
-        getline(ss, categoryStr, ',');
+        getline(ss, uniqId, ',');       // id
+        getline(ss, productName, ',');  // name
+        getline(ss, line, ',');         // skip brand
+        getline(ss, line, ',');         // skip asin
+        getline(ss, categoryStr, ',');  // category
 
         if (uniqId.empty() || productName.empty()) continue;
 
         vector<string> categories;
-        if (categoryStr.empty()) categories.push_back("NA");
+        if (categoryStr.empty()) categories.push_back("NA");  // missing categories
         else categories = split(categoryStr, '|');
 
         Product p(trim(uniqId), trim(productName), categories);
 
-        // Insert into products table
-        productsTable.insert(p.getId(), p);
+        productsTable.insert(p.getId(), p); // id -> Product
 
-        // Efficient category insertion
+        // category -> list of Products
         for (const auto& cat : categories) {
             list<Product> existingList;
             if (categoryTable.find(cat, existingList)) {
-                existingList.push_back(p);
+                existingList.push_back(p);       // add to existing list
                 categoryTable.insert(cat, existingList);
             }
             else {
                 list<Product> newList;
-                newList.push_back(p);
+                newList.push_back(p);            // new list
                 categoryTable.insert(cat, newList);
             }
         }
@@ -122,14 +113,13 @@ void bootStrap(const string& filename) {
 }
 
 int main() {
-    // Automatically load CSV from the data folder
     string csvFile = "data/marketing_sample_for_amazon_com-ecommerce__20200101_20200131__10k_data-1.csv";
-    bootStrap(csvFile);
+    bootStrap(csvFile); // populate tables
 
     string line;
     cout << "> ";
     while (getline(cin, line)) {
-        evalCommand(trim(line));
+        evalCommand(trim(line)); // parse command
         cout << "> ";
     }
 
