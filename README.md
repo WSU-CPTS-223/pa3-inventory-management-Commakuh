@@ -52,3 +52,30 @@ Quits the program
 auto runs
 
 It takes a long while to log on first boot
+
+
+#	Data Cleanup Decisions:
+
+Some products have missing category data — these are labeled as "NA"
+
+Some products have multiple categories, separated by "|".
+Each category entry is handled individually in the category table
+
+Whitespace is trimmed from all CSV fields
+
+Empty product IDs or names are skipped entirely to prevent invalid entries
+
+#	Testing Approach:
+
+All data structure testing was done using cassert in tests/test_HashTable.cpp
+
+Insertion and lookup — Verify that inserted key-value pairs can be retrieved correctly
+
+Missing key lookup — Ensure the hash table returns false when the key doesn’t exist
+
+Collision handling — Force collisions with small capacity to confirm both keys still work
+
+Duplicate insert — Confirm that inserting an existing key overwrites old value
+
+
+All tests passed successfully.
